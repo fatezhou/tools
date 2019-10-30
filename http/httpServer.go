@@ -1,8 +1,11 @@
 package http
 
 import (
+	"fmt"
+	"net/http"
 	"strings"
 	"sync"
+	"github.com/fatezhou/tools/sys"
 )
 
 type HttpServer struct{
@@ -17,19 +20,24 @@ func (h *HttpServer)AddFilter(fileExt string){
 }
 
 func (h *HttpServer)IsInFilter(filePath string)bool{
-	
-
-
-	npos := strings.LastIndex(filePath, ".")
-	if npos != -1{
-		ext := filePath[npos + 1:]
-		h.m.RLock()
-		defer h.m.RUnlock()
-		if _, ok := h.FileExtFilter[strings.ToLower(ext)]; ok{
-			return true
-		}
+	file := sys.FilePath{filePath}
+	ext := strings.ToLower(file.GetPathExt())
+	h.m.RLock()
+	defer h.m.RUnlock()
+	if _, ok := h.FileExtFilter[ext]; ok{
+		return true
 	}
 	return false
 }
 
+func (h *HttpServer)Run(ip string, port int)bool{
+	strIp := fmt.Sprintf("%s:%d", ip, port)
+	if nil == http.ListenAndServe(strIp, h){
+		return true
+	}
+	return false
+}
 
+func (h *HttpServer)ServeHTTP(res http.ResponseWriter, req *http.Request){
+
+}
