@@ -39,7 +39,7 @@ func (c *HashCache)Get(key string)interface{}{
 			c.EachRemove()
 			break
 		}
-		return v
+		return v.Data
 	}
 	return nil
 }
@@ -84,6 +84,9 @@ func (c *HashCache)SaveRemove(key string)bool{
 func (c *HashCache)SetConfig(Expire int64, ExpireAdd int64){
 	c.expire = Expire
 	c.expireAdd = ExpireAdd
+	if c.data == nil{
+		c.data = make(map[string]HashCacheInfo)
+	}
 }
 
 func (c *HashCache)LazyRemove(info *HashCacheInfo){
