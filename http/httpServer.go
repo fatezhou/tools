@@ -11,7 +11,7 @@ import (
 	"sync"
 )
 
-type ServerHandler func(data map[string]string, writer http.ResponseWriter)
+type ServerHandler func(data map[string]string, res http.ResponseWriter, req *http.Request)
 
 type HttpServerConfig struct{
 	Ip string 	`json:"ip"`
@@ -104,7 +104,7 @@ func (h *HttpServer)ServeHTTP(res http.ResponseWriter, req *http.Request){
 					mapData[k] = v[0]
 				}
 			}
-			handler(mapData, res)
+			handler(mapData, res, req)
 		}else{
 			h.Redirect404(res, req)
 		}
